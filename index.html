@@ -1,0 +1,68 @@
+<html>
+<head>
+    <title>Chess</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <body>
+        <div class="chessboard"></div>
+    </body>
+    <script type="text/javascript">
+        let columns=8,rows=8;
+
+        function renderChessBoard(){
+            let counter=0;
+            let table = document.createElement("table");
+            table.id="table1";
+           
+            for (let i = 0; i <columns; i++) {
+                let tr = document.createElement('tr');
+                for (let j = 0; j <rows; j++) {
+                    let td = document.createElement('td');
+                    if (i%2 == j%2) {
+                        td.className = "black";
+                    } else {
+                        td.className = "white";
+                    }
+                    td.id=counter;
+                    td.onclick=function(data){
+                        findDiagonalsAndHighLight(data.srcElement.id)
+                    }
+                    tr.appendChild(td);
+                    counter++;
+                }
+                table.appendChild(tr);
+            }
+            document.getElementsByClassName('chessboard')[0].appendChild(table);
+        }
+
+        function findDiagonalsAndHighLight(ind) {
+            let arr = Array(columns*rows).fill().map((x, i) => i);
+            let nRow = Math.floor(ind / rows);
+            let nCol = ind % rows;
+
+            let LTR = [];
+            for (let r = nRow - Math.min(nRow, nCol), c = nCol - Math.min(nRow, nCol); r < columns && c < rows; r++, c++){
+                LTR.push(arr[r * rows + c])
+            }
+
+            let RTL = [];
+            for (let r = nRow - Math.min(nRow, rows - nCol - 1), c = nCol + Math.min(nRow, rows - nCol - 1); r < columns && 0 <= c; r++, c--){
+                RTL.push(arr[r * rows + c])
+            }
+
+            let table = document.getElementById("table1");
+            for (let i = 0, row; row = table.rows[i]; i++) {
+               for (let j = 0, col; col = row.cells[j]; j++) {
+                    if(LTR.indexOf(Number(col.id))>-1 || RTL.indexOf(Number(col.id))>-1){
+                        col.style.background="red";
+                    }
+               }  
+            }
+        }
+
+        window.addEventListener('load',function(){
+            renderChessBoard();
+        });
+
+    </script>
+</body>
+</html>
